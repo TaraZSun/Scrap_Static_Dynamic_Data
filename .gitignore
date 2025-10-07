@@ -1,0 +1,25 @@
+.DS_Store   
+.vscode/       
+.idea/       
+venv/
+env/
+.venv/
+.python-version
+__pycache__/
+*.pyc
+build/
+dist/
+*.egg-info/
+data/              
+*.csv
+*.json
+*.html
+*.log
+app.log
+*.dot
+*.png
+*.svg
+detailed_pydantic_schema.png 
+.env            # Environment variables file
+.env.*
+config_local.py # Local or testing configuration files
