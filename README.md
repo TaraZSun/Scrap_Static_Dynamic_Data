@@ -1,8 +1,8 @@
-# Dynamic Scraping, Validation, and Visualization
+# Static & Dynamic Web Scraping
 
 This project details a complete, modern data workflow, starting with external data ingestion from both static and dynamic web sources, and concluding with strict data validation and visual confirmation of the final data structure. It demonstrates the successful integration of Playwright, Pandas, Pydantic, and Graphviz to create a robust, production-ready data pipeline.
 
-# I. Data Ingestion (Static & Dynamic Web Scraping)
+# I. Data Ingestion
 This initial phase focuses on extracting structured information from two different types of web sources, showcasing adaptability to various web technologies.
 
 ## A. Static Data Ingestion (World Population by Country)
