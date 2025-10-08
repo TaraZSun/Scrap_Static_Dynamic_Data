@@ -1,87 +1,73 @@
 import sys
 from typing import Optional
 import logging
-# from src.config import (
-#     URL_STATIC, URL_DYNAMIC
-# )
 import json
-from src import web_scraper
-from src import data_cleaner 
-from src.data_model import PopulationTable, CountryData, IndexData, IndexTable
-from src.visualizer import Visualizer
+import argparse
+from src import data_cleaner, web_scraper,static_models, visualizer, config, dynamic_models
 import asyncio  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__) 
-URL_STATIC = "https://www.worldometers.info/world-population/population-by-country/"
-URL_DYNAMIC = "https://finance.yahoo.com/world-indices"
 
+def static_model():
+    return visualizer.Visualizer(models_to_visualize=static_models), static_models.PopulationTable.schema_json()
 
-def run_static_pipeline() -> None:
+def dynamic_model():
+    return visualizer.Visualizer(models_to_visualize=dynamic_models), dynamic_models.IndexTable.schema_json()
+
+def generate_mermaid_graphviz(visualizer,schema_json_string)->None:
+    # Mermaid
+    mermiad_code= visualizer.generate_mermaid_schema()
+    logger.info(mermiad_code)
+    # Graphviz
+    schema_dict = json.loads(schema_json_string)
+    visualizer.generate_detailed_graph(schema_dict)
+
+def run_static_pipeline(visualizer,schema_json_string) -> None:
     """
     Executes the entire static data pipeline: scrape -> process/validate -> visualize.
     """
     logger.info("--- Starting Static Data Pipeline ---")
-
-    logger.info(f"Attempting to scrape data from: {URL_STATIC}")
-    statics_raw_html: Optional[str] = web_scraper.fetch_static_data(URL_STATIC) 
-
-    if not statics_raw_html:
-        logger.error("Failed to retrieve raw HTML. Exiting pipeline.")
-        return
-
-    logger.info("Raw data retrieved successfully. Starting processing and validation.")
+    statics_raw_html: Optional[str] = web_scraper.fetch_static_data(config.URL_STATIC) 
+    data_cleaner.clean_static_data(statics_raw_html)
+    generate_mermaid_graphviz(visualizer,schema_json_string)
     
-    validated_table: Optional[PopulationTable] = data_cleaner.clean_static_data(statics_raw_html)
 
-    if not validated_table:
-        logger.error("Data validation failed. Check data_cleaner for errors.")
-        return
-
-    logger.info("Generating visualizations...")
-    models_to_graph = [PopulationTable, CountryData]
-
-    visualizer = Visualizer(models_to_visualize=models_to_graph)
-    
-    mermaid_code = visualizer.generate_mermaid_schema()
-    logger.info("\n--- Generated Mermaid Code ---\n%s\n--- End Mermaid Code ---", mermaid_code)
-
-    schema_json_string = PopulationTable.schema_json()
-    schema_dict = json.loads(schema_json_string)
-
-    visualizer.generate_detailed_graph(schema_dict)
-    
-    logger.info("--- Static Data Pipeline Finished Successfully ---")
-
-async def run_dynamic_pipeline() -> None:
+async def run_dynamic_pipeline(visualizer,schema_json_string) -> None:
     """
     Executes the entire dynamic data pipeline: scrape (async) -> process/validate -> visualize.
     """
-    logger.info(f"Attempting to scrape data from: {URL_DYNAMIC}")
-    dynamic_raw_html: Optional[str] = await web_scraper.fetch_dynamic_table_content(URL_DYNAMIC) 
+    logger.info("--- Starting Dynamic Data Pipeline ---")
+    await web_scraper.fetch_dynamic_table_content(config.URL_DYNAMIC) 
+    generate_mermaid_graphviz(visualizer,schema_json_string)
 
-    if not dynamic_raw_html:
-        logger.error("Failed to retrieve dynamic raw HTML. Exiting pipeline.")
-        return
-
-    logger.info("Dynamic raw data retrieved successfully. Starting processing and validation.")
-    validated_data: Optional[IndexTable] = data_cleaner.clean_dynamic_data(dynamic_raw_html)
-
-    if not validated_data:
-        logger.error("Dynamic data validation failed. Check data_cleaner for errors.")
-        return
-    
-    dynamic_visualizer = Visualizer(models_to_visualize=[IndexData])
-    dynamic_visualizer.generate_mermaid_schema()
-    logger.info("Generated Dynamic Mermaid Code.")
-
-    logger.info("--- Dynamic Data Pipeline Finished Successfully ---")
 
 
 if __name__ == "__main__":
-    try:
-        run_static_pipeline()
-        # asyncio.run(run_dynamic_pipeline())
-    except Exception as e:
-        logger.critical(f"A critical, unexpected error occurred in the main pipeline: {e}", exc_info=True)
-        sys.exit(1)
+    parser = argparse.ArgumentParser(
+        description="Script to clean HTML table data. Provide input files or scrape data directly."
+    )
+    parser.add_argument(
+        "--model_type",
+        type=str,
+        default="static",
+        help="Determines which data pipeline to run. Choose 'static' "
+        "for population data (default) or 'dynamic' for world indices data.",
+        choices=["static","dynamic"]
+    )
+    args = parser.parse_args()
+    static_visualizer,static_schema_json_string = static_model()
+    dynamic_visualizer,dynamic_schema_json_string = dynamic_model()
+    pipeline_map={
+        "static": lambda: run_static_pipeline(static_visualizer,static_schema_json_string),
+        "dynamic": lambda: run_dynamic_pipeline(dynamic_visualizer,dynamic_schema_json_string),
+    }
+    try: 
+        if args.model_type=="static":
+            pipeline_map["static"]()
+        else:
+            coroutine = pipeline_map["dynamic"]()
+            asyncio.run(coroutine)
+    except Exception:
+        sys.exit()  
+    

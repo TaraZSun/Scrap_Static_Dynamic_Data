@@ -22,13 +22,6 @@ This phase standardizes the raw HTML into a consistent tabular format ready for 
 
 **Process:** The read_html function is leveraged to efficiently parse the raw HTML strings (obtained from both static and dynamic sources) directly into clean DataFrame objects. This step includes initial data cleaning, such as column renaming and data type inference.
 
-# III. Data Validation and Type Enforcement (Pydantic)
-The core of the workflow is ensuring data quality by enforcing strict types and structure before analysis. This step uses the defined Pydantic models to act as a schema validation layer.
-
-**Process:** After Pandas processing, DataFrame records are converted into Python dictionaries and passed to the predefined Pydantic models.
-
-**Benefit:** This step guarantees that all ingested data conforms to the expected schema (e.g., ensuring numeric fields are integers or floats) and immediately flags any missing or improperly typed values, making the pipeline robust against upstream data changes.
-
 # IV. Model Visualization and Documentation
 The final stage focuses on documenting the validated data structure using clear, descriptive diagrams.
 
@@ -44,9 +37,11 @@ You can also include the file structure you organized in the previous step to co
 ### finance-data-scraper
 ```
 ├── src/
+│   ├── config.py           # constants used 
 │   ├── web_scraper.py      # Core Playwright/Requests logic
-│   ├── data_model.py       # Pydantic schema definitions
-│   ├── data_processor.py   # Pandas cleaning/transformation
+│   ├── static_models.py    # Pydantic schema definitions for static data
+│   ├── dynamic_models.py   # Pydantic schema definitions for dynamic data
+│   ├── data_cleaner.py     # Pandas cleaning/transformation
 │   └── visualizer.py       # Mermaid/Graphviz generation
 ├── main.py                 # Execution script
 └── requirements.txt        # Project dependencies

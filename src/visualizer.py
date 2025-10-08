@@ -1,4 +1,3 @@
-import sys
 from pydantic_mermaid import MermaidGenerator # type: ignore
 from typing import List, Dict, Any 
 import graphviz # type: ignore 
@@ -16,14 +15,13 @@ from .config import (
 
 class Visualizer:
     def __init__(self, models_to_visualize: List):
-        self.models = models_to_visualize
+        self.generator = MermaidGenerator(models_to_visualize)
         
     def generate_mermaid_schema(self) -> str:
         """
         Generates the Mermaid class diagram code for the Pydantic models.
         """
-        generator = MermaidGenerator(sys.modules[__name__]) 
-        mermaid_text = generator.generate_chart() 
+        mermaid_text = self.generator.generate_chart() 
         return mermaid_text
 
     def generate_detailed_graph(self, schema_dict: Dict[str, Any]): 

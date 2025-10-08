@@ -1,5 +1,5 @@
 // Pydantic Schema Relationship
 digraph {
 	graph [rankdir=LR splines=ortho]
-	CountryData [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#F0F8FF"><TR><TD COLSPAN="2" BGCOLOR="#ADD8E6"><B>CountryData</B></TD></TR><TR><TD ALIGN="LEFT">Country (or dependency)</TD><TD ALIGN="LEFT">String</TD></TR><TR><TD ALIGN="LEFT">Population 2025</TD><TD ALIGN="LEFT">Integer</TD></TR><TR><TD ALIGN="LEFT">Yearly Change</TD><TD ALIGN="LEFT">String</TD></TR></TABLE>> shape=none]
+	IndexData [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#F0F8FF"><TR><TD COLSPAN="2" BGCOLOR="#ADD8E6"><B>IndexData</B></TD></TR><TR><TD ALIGN="LEFT">Symbol</TD><TD ALIGN="LEFT">String</TD></TR><TR><TD ALIGN="LEFT">Name</TD><TD ALIGN="LEFT">String</TD></TR><TR><TD ALIGN="LEFT">Last Price</TD><TD ALIGN="LEFT">Number</TD></TR><TR><TD ALIGN="LEFT">Change</TD><TD ALIGN="LEFT">Number</TD></TR><TR><TD ALIGN="LEFT">% Change</TD><TD ALIGN="LEFT">String</TD></TR><TR><TD ALIGN="LEFT">Volume</TD><TD ALIGN="LEFT">Integer</TD></TR></TABLE>> shape=none]
 }
