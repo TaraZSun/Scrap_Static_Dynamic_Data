@@ -3,7 +3,7 @@ import io
 from typing import Optional, List, Dict, Any
 import logging
 from src.config import REQUIRED_COLUMNS_STATIC 
-from src import web_scraper
+from . import scrap_web_data
 import asyncio
 import argparse
 logging.basicConfig(level=logging.INFO)
@@ -74,12 +74,12 @@ def clean_dynamic_data(dynamic_raw_html: Optional[str]) -> Optional[List[Dict[st
 
 def main(mode:str)->None:          
     if mode=="static":
-        html = web_scraper.fetch_static_data()
+        html = scrap_web_data.fetch_static_data()
         if not html:
             logging.info("Failed to fetch static data.")
     else:
         try:
-            html = asyncio.run(web_scraper.fetch_dynamic_table_content())
+            html = asyncio.run(scrap_web_data.fetch_dynamic_table_content())
             if not html:
                 logging.info("Failed to fetch dynamic data.")
         except Exception as e:

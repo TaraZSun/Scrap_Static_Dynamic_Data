@@ -1,4 +1,5 @@
-from src import data_cleaner, web_scraper
+from . import clean_data
+from . import scrap_web_data
 import logging
 import argparse
 import json
@@ -36,10 +37,10 @@ def save_cleaned_data(
     Main function to scrape, clean, and save data based on the specified mode.
     """
     if mode=="static":
-        cleaned_data = data_cleaner.clean_static_data(web_scraper.fetch_static_data())
+        cleaned_data = clean_data.clean_static_data(scrap_web_data.fetch_static_data())
     elif mode=="dynamic":
-        dynamic_html = asyncio.run(web_scraper.fetch_dynamic_table_content())
-        cleaned_data = data_cleaner.clean_dynamic_data(dynamic_html)
+        dynamic_html = asyncio.run(scrap_web_data.fetch_dynamic_table_content())
+        cleaned_data = clean_data.clean_dynamic_data(dynamic_html)
     else:
         logging.error(f"Invalid mode: {mode}. Choose 'static' or 'dynamic'.")
         return

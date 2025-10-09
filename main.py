@@ -3,16 +3,17 @@ from typing import Optional
 import logging
 import json
 import argparse
-from src import data_cleaner, web_scraper,static_models, visualizer, config, dynamic_models, save_scraped_data
+from . import clean_data, scrap_web_data, visualize
+from src import static_models, config, dynamic_models, save_scraped_data
 import asyncio  # noqa: E402
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__) 
 
 def static_model():
-    return visualizer.Visualizer(models_to_visualize=static_models), static_models.PopulationTable.schema_json()
+    return visualize.Visualizer(models_to_visualize=static_models), static_models.PopulationTable.schema_json()
 
 def dynamic_model():
-    return visualizer.Visualizer(models_to_visualize=dynamic_models), dynamic_models.IndexTable.schema_json()
+    return visualize.Visualizer(models_to_visualize=dynamic_models), dynamic_models.IndexTable.schema_json()
 
 def generate_mermaid_graphviz(visualizer,schema_json_string)->None:
     # Mermaid
@@ -27,8 +28,8 @@ def run_static_pipeline(visualizer,schema_json_string) -> None:
     Executes the entire static data pipeline: scrape -> process/validate -> visualize.
     """
     logger.info("--- Starting Static Data Pipeline ---")
-    statics_raw_html: Optional[str] = web_scraper.fetch_static_data(config.URL_STATIC) 
-    data_cleaner.clean_static_data(statics_raw_html)
+    statics_raw_html: Optional[str] = scrap_web_data.fetch_static_data(config.URL_STATIC) 
+    clean_data.clean_static_data(statics_raw_html)
     generate_mermaid_graphviz(visualizer,schema_json_string)
     
 
@@ -37,7 +38,7 @@ async def run_dynamic_pipeline(visualizer,schema_json_string) -> None:
     Executes the entire dynamic data pipeline: scrape (async) -> process/validate -> visualize.
     """
     logger.info("--- Starting Dynamic Data Pipeline ---")
-    await web_scraper.fetch_dynamic_table_content(config.URL_DYNAMIC) 
+    await scrap_web_data.fetch_dynamic_table_content(config.URL_DYNAMIC) 
     generate_mermaid_graphviz(visualizer,schema_json_string)
 
 def main(mode:str, file_path, file_format)-> None:
