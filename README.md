@@ -19,16 +19,6 @@ This phase standardizes the raw HTML into a consistent tabular format ready for 
 
 # III. Save Data
 The data saving process is unified into a single, robust function that handles file formatting (JSON/CSV), path management, and directory creation for both static and dynamic data types, and the file_path can be customised.
-1. Default
-Runs in static mode and saves the file to the default location (data/cleaned_static_data.json).
-```bash
-python3 src/save_scraped_data.py
-```
-2. Dynamic Data, CSV Output (Default Path)
-Runs in dynamic mode and saves the file to data/cleaned_dynamic_data.csv.
-```bash
-python3 src/save_scraped_data.py --mode dynamic --file_format csv
-```
 
 # IV. Model Visualization and Documentation
 The final stage focuses on documenting the validated data structure using clear, descriptive diagrams.
@@ -39,6 +29,17 @@ Used for generating quick, text-based flowcharts and diagrams (e.g., Class Diagr
 ## 2. Graphviz (High-Quality Visualization)
 Used for generating high-quality, static image files (PNG/SVG) from the Pydantic models. This method provides a clear, detailed, and aesthetically superior representation of the data relationships and final schema structure.
 
+# Method to Run Main
+1. Default
+Runs in static mode and saves the file to the default location (data/cleaned_static_data.json).
+```bash
+python3 main.py
+```
+2. Dynamic Data, CSV Output
+Runs in dynamic mode and saves the file to my_data/cleaned_dynamic_data.csv.
+```bash
+python3 main.py --mode dynamic --file_path my_data --file_format csv 
+```
 ### finance-data-scraper
 ```
 ├── src/

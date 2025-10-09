@@ -1,11 +1,12 @@
 import pandas as pd # type: ignore
 import io
 from typing import Optional, List, Dict, Any
-
-from config import REQUIRED_COLUMNS_STATIC 
-import web_scraper
+import logging
+from src.config import REQUIRED_COLUMNS_STATIC 
+from src import web_scraper
 import asyncio
 import argparse
+logging.basicConfig(level=logging.INFO)
 
 def clean_static_data(statis_raw_html: Optional[str]) -> Optional[List[Dict[str, Any]]]:
     """
@@ -18,16 +19,12 @@ def clean_static_data(statis_raw_html: Optional[str]) -> Optional[List[Dict[str,
     Returns: 
         A list of dictionaries ready for Pydantic (or None on failure).
     """
-    if not statis_raw_html:
-        print("ERROR: Cannot process static data: Raw HTML is None.")
-        return None
-
     try:
         tables = pd.read_html(io.StringIO(statis_raw_html))
         df = tables[0] 
         
         if not all(col in df.columns for col in REQUIRED_COLUMNS_STATIC):
-            print("ERROR: Static DataFrame is missing required columns. Check scraping target.")
+            logging.error("ERROR: Static DataFrame is missing required columns. Check scraping target.")
             return None
         
         df["Population 2025"] = (
@@ -40,7 +37,7 @@ def clean_static_data(statis_raw_html: Optional[str]) -> Optional[List[Dict[str,
         return df.to_dict(orient='records') 
 
     except Exception as e:
-        print(f"ERROR: Failed during static data processing (Pandas/Cleaning): {e}")
+        logging.info(f"ERROR: Failed during static data processing (Pandas/Cleaning): {e}")
         return None
 
 
@@ -56,10 +53,6 @@ def clean_dynamic_data(dynamic_raw_html: Optional[str]) -> Optional[List[Dict[st
     Returns: 
         A list of dictionaries ready for Pydantic (or None on failure).
     """
-    if not dynamic_raw_html:
-        print("ERROR: Cannot process dynamic data: Raw HTML is None.")
-        return None
-
     try:
         tables = pd.read_html(io.StringIO(dynamic_raw_html))
         df = tables[0]
@@ -76,8 +69,21 @@ def clean_dynamic_data(dynamic_raw_html: Optional[str]) -> Optional[List[Dict[st
         return df.to_dict(orient='records')
 
     except Exception as e:
-        print(f"ERROR: Failed during dynamic data processing (Pandas/Cleaning): {e}")
+        logging.info(f"ERROR: Failed during dynamic data processing (Pandas/Cleaning): {e}")
         return None
+
+def main(mode:str)->None:          
+    if mode=="static":
+        html = web_scraper.fetch_static_data()
+        if not html:
+            logging.info("Failed to fetch static data.")
+    else:
+        try:
+            html = asyncio.run(web_scraper.fetch_dynamic_table_content())
+            if not html:
+                logging.info("Failed to fetch dynamic data.")
+        except Exception as e:
+            logging.info(f"Exception during dynamic fetch: {e}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -91,30 +97,6 @@ if __name__ == "__main__":
         choices=["static","dynamic"]
     )   
     args = parser.parse_args()
-    if args.mode=="static":
-        html = web_scraper.fetch_static_data()
-        if html:
-            print(html)
-        else:
-            print("Failed to fetch static data.")
-    else:
-        try:
-            html = asyncio.run(web_scraper.fetch_dynamic_table_content())
-            if html:
-                print(html)
-            else:
-                print("Failed to fetch dynamic data.")
-        except Exception as e:
-            print(f"Exception during dynamic fetch: {e}")
+    main(args.mode)
 
 
-
-
-    # static_html = web_scraper.fetch_static_data()
-    # static_data = clean_static_data(static_html)
-    # print(static_data)
-    # try:
-    #     # dynamic_html = asyncio.run(web_scraper.fetch_dynamic_table_content())
-    #     # dynamic_data = clean_dynamic_data(dynamic_html)
-    # except Exception:
-    #     dynamic_html = None

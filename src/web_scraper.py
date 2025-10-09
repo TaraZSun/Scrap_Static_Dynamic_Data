@@ -6,7 +6,7 @@ from typing import Optional
 import nest_asyncio  # type: ignore
 import logging
 import argparse
-from config import (
+from src.config import (
     URL_STATIC, 
     USER_AGENT, 
     STATUS_FORCELIST, 
@@ -82,8 +82,20 @@ async def fetch_dynamic_table_content(
         
         finally:
             await browser.close()
-            
 
+def main(mode:str)->None:          
+    if mode=="static":
+        if not fetch_static_data():
+            logging.info("Failed to fetch static data.")
+    else:
+        dynamic_html = asyncio.run(fetch_dynamic_table_content())
+        if not dynamic_html:
+            logging.info("Failed to fetch dynamic data.")
+        else:
+            logging.info(f"Dynamic data fetched successfully. HTML snippet: "
+                        f"\n{dynamic_html[:100]}..."
+                        )
+    
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Script to fetch HTML table data. Choose between static or dynamic page scraping."
@@ -96,16 +108,6 @@ if __name__ == "__main__":
         choices=["static","dynamic"]
     )   
     args = parser.parse_args()
-    if args.mode=="static":
-        if not fetch_static_data():
-            logging.info("Failed to fetch static data.")
-    else:
-        dynamic_html = asyncio.run(fetch_dynamic_table_content())
-        if not dynamic_html:
-            logging.info("Failed to fetch dynamic data.")
-        else:
-            logging.info(f"Dynamic data fetched successfully. HTML snippet: "
-                        f"\n{dynamic_html[:100]}..."
-                        )
+    main(args.mode)
         
        

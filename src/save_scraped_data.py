@@ -1,11 +1,11 @@
-import data_cleaner
+from src import data_cleaner, web_scraper
 import logging
 import argparse
-import web_scraper
 import json
 import pathlib
 import pandas
 import os
+import asyncio
 logging.basicConfig(level=logging.INFO)
 
 def save_cleaned_data_to_file(
@@ -38,7 +38,8 @@ def save_cleaned_data(
     if mode=="static":
         cleaned_data = data_cleaner.clean_static_data(web_scraper.fetch_static_data())
     elif mode=="dynamic":
-        cleaned_data = data_cleaner.clean_dynamic_data(web_scraper.fetch_dynamic_table_content())
+        dynamic_html = asyncio.run(web_scraper.fetch_dynamic_table_content())
+        cleaned_data = data_cleaner.clean_dynamic_data(dynamic_html)
     else:
         logging.error(f"Invalid mode: {mode}. Choose 'static' or 'dynamic'.")
         return
@@ -49,6 +50,20 @@ def save_cleaned_data(
     final_file_path= f"{base_name}.{file_format}"
     save_cleaned_data_to_file(cleaned_data,final_file_path,file_format)
 
+def main(mode:str, file_path:str, file_format)->None:
+    base_file_path: str
+
+    if file_path is None:
+        if mode=="static":
+            base_file_path="data/cleaned_static_data"
+        else:
+            base_file_path="data/cleaned_dynamic_data"
+    else:
+        base_file_path = file_path
+    final_path = pathlib.Path(f"{base_file_path}.{file_format}")
+    output_dir = final_path.parent
+    output_dir.mkdir(parents=True, exist_ok=True)
+    save_cleaned_data(mode, base_file_path, file_format)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -75,18 +90,4 @@ if __name__ == "__main__":
         choices=["json","csv"]
     )   
     args = parser.parse_args()
-    base_file_path: str
-
-    if args.file_path is None:
-        if args.mode=="static":
-            base_file_path="data/cleaned_static_data"
-        else:
-            base_file_path="data/cleaned_dynamic_data"
-    else:
-        base_file_path = args.file_path
-
-    final_path = pathlib.Path(f"{base_file_path}.{args.file_format}")
-    output_dir = final_path.parent
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    save_cleaned_data(args.mode, base_file_path, args.file_format)
+    main(args.mode, args.file_path, args.file_format)
