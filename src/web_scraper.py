@@ -4,8 +4,9 @@ from bs4 import BeautifulSoup # type: ignore
 from playwright.async_api import async_playwright # type: ignore
 from typing import Optional
 import nest_asyncio  # type: ignore
-
-from .config import (
+import logging
+import argparse
+from config import (
     URL_STATIC, 
     USER_AGENT, 
     STATUS_FORCELIST, 
@@ -13,7 +14,7 @@ from .config import (
     URL_DYNAMIC,
     TABLE_HEADER_SELECTOR_DYNAMIC,
 )
-
+logging.basicConfig(level=logging.INFO)
 
 def fetch_static_data(url: str = URL_STATIC) -> Optional[str]:
     """
@@ -61,7 +62,9 @@ async def fetch_dynamic_table_content(
         timeout_ms: Increased timeout to 90 seconds (90000 milliseconds).
     """
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=False, slow_mo=500)
+        browser = await p.chromium.launch(
+            headless=False, 
+            slow_mo=500)
         page = await browser.new_page()
         
         try:
@@ -74,9 +77,35 @@ async def fetch_dynamic_table_content(
             return f"<table>{table_html}</table>" 
             
         except Exception as e:
-            print(f"FATAL ERROR IN PLAYWRIGHT FETCH. The cause is likely TimeoutError. Details: {e}") 
+            logging.error(f"FATAL ERROR IN PLAYWRIGHT FETCH. The cause is likely TimeoutError. Details: {e}") 
             return None
         
         finally:
             await browser.close()
             
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Script to fetch HTML table data. Choose between static or dynamic page scraping."
+    )
+    parser.add_argument(
+        "--mode",
+        type=str,
+        default="static",
+        help="Choose 'static' for static page scraping (default) or 'dynamic' for dynamic page scraping.",
+        choices=["static","dynamic"]
+    )   
+    args = parser.parse_args()
+    if args.mode=="static":
+        if not fetch_static_data():
+            logging.info("Failed to fetch static data.")
+    else:
+        dynamic_html = asyncio.run(fetch_dynamic_table_content())
+        if not dynamic_html:
+            logging.info("Failed to fetch dynamic data.")
+        else:
+            logging.info(f"Dynamic data fetched successfully. HTML snippet: "
+                        f"\n{dynamic_html[:100]}..."
+                        )
+        
+       

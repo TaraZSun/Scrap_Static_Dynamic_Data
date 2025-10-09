@@ -2,8 +2,8 @@ import pandas as pd # type: ignore
 import io
 from typing import Optional, List, Dict, Any
 
-from .config import REQUIRED_COLUMNS_STATIC 
-from src import web_scraper
+from config import REQUIRED_COLUMNS_STATIC 
+import web_scraper
 import asyncio
 import argparse
 
@@ -83,11 +83,38 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Script to clean HTML table data. Provide input files or scrape data directly."
     )
+    parser.add_argument(
+        "--mode",
+        type=str,
+        default="static",
+        help="Choose 'static' for static page scraping (default) or 'dynamic' for dynamic page scraping.",
+        choices=["static","dynamic"]
+    )   
     args = parser.parse_args()
-    static_html = web_scraper.fetch_static_data()
-    static_data = clean_static_data(static_html)
-    try:
-        dynamic_html = asyncio.run(web_scraper.fetch_dynamic_table_content())
-        dynamic_data = clean_dynamic_data(dynamic_html)
-    except Exception:
-        dynamic_html = None
+    if args.mode=="static":
+        html = web_scraper.fetch_static_data()
+        if html:
+            print(html)
+        else:
+            print("Failed to fetch static data.")
+    else:
+        try:
+            html = asyncio.run(web_scraper.fetch_dynamic_table_content())
+            if html:
+                print(html)
+            else:
+                print("Failed to fetch dynamic data.")
+        except Exception as e:
+            print(f"Exception during dynamic fetch: {e}")
+
+
+
+
+    # static_html = web_scraper.fetch_static_data()
+    # static_data = clean_static_data(static_html)
+    # print(static_data)
+    # try:
+    #     # dynamic_html = asyncio.run(web_scraper.fetch_dynamic_table_content())
+    #     # dynamic_data = clean_dynamic_data(dynamic_html)
+    # except Exception:
+    #     dynamic_html = None

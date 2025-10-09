@@ -23,3 +23,6 @@ detailed_pydantic_schema.png
 .env            # Environment variables file
 .env.*
 config_local.py # Local or testing configuration files
+detailed_pydantic_schema.png
+detailed_pydantic_schema
+data/
