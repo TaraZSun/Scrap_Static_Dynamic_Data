@@ -1,8 +1,9 @@
+"""Script to visualize Pydantic models using Mermaid and Graphviz."""
 from pydantic_mermaid import MermaidGenerator # type: ignore
 from typing import List, Dict, Any 
 import graphviz # type: ignore 
 
-from .config import (
+from src.config import (
     TABLE_BORDER,
     CELL_BORDER,
     CELL_SPACING,

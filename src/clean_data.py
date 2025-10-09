@@ -1,9 +1,10 @@
+"""Clean and prepare HTML table data fetched from web scraping for Pydantic validation."""
 import pandas as pd # type: ignore
 import io
 from typing import Optional, List, Dict, Any
 import logging
 from src.config import REQUIRED_COLUMNS_STATIC 
-from . import scrap_web_data
+from src import scrap_web_data
 import asyncio
 import argparse
 logging.basicConfig(level=logging.INFO)

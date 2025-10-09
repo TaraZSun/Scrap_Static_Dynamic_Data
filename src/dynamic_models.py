@@ -1,3 +1,4 @@
+"""Create Pydantic models for structured representation of World Indices data."""
 from typing import List
 from pydantic import BaseModel, Field  # type: ignore
 

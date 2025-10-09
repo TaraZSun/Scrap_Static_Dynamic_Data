@@ -1,3 +1,4 @@
+"""Script to fetch HTML table data from static and dynamic web pages."""
 import asyncio
 import requests # type: ignore
 from bs4 import BeautifulSoup # type: ignore

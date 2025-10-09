@@ -1,5 +1,6 @@
-from . import clean_data
-from . import scrap_web_data
+"""Script to save cleaned HTML table data from static or dynamic web pages."""
+from src import clean_data
+from src import scrap_web_data
 import logging
 import argparse
 import json

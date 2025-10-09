@@ -1,3 +1,4 @@
+"""Script to define Pydantic models for world population data."""
 from typing import List
 from pydantic import BaseModel, Field  # type: ignore
 

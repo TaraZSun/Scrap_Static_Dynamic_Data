@@ -1,3 +1,4 @@
+"""Main script to run the data scraping, cleaning, and visualization pipelines for static and dynamic datasets."""
 import sys
 from typing import Optional
 import logging
