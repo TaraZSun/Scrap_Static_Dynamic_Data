@@ -7,3 +7,6 @@ graphviz
 requests
 bs4
 lxml
+pytest 
+pytest-asyncio 
+pytest-mock
