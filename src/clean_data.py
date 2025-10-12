@@ -75,7 +75,7 @@ def clean_dynamic_data(dynamic_raw_html: Optional[str]) -> Optional[List[Dict[st
 
 def main(mode:str)->None:          
     if mode=="static":
-        html = scrap_web_data.fetch_static_data()
+        html = asyncio.run(scrap_web_data.fetch_static_data())
         if not html:
             logging.info("Failed to fetch static data.")
     else:

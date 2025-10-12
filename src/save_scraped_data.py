@@ -38,7 +38,8 @@ def save_cleaned_data(
     Main function to scrape, clean, and save data based on the specified mode.
     """
     if mode=="static":
-        cleaned_data = clean_data.clean_static_data(scrap_web_data.fetch_static_data())
+        static_html = asyncio.run(scrap_web_data.fetch_static_data())
+        cleaned_data = clean_data.clean_static_data(static_html)
     elif mode=="dynamic":
         dynamic_html = asyncio.run(scrap_web_data.fetch_dynamic_table_content())
         cleaned_data = clean_data.clean_dynamic_data(dynamic_html)

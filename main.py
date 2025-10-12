@@ -4,7 +4,7 @@ from typing import Optional
 import logging
 import json
 import argparse
-from . import clean_data, scrap_web_data, visualize
+from src import clean_data, scrap_web_data, visualize
 from src import static_models, config, dynamic_models, save_scraped_data
 import asyncio  # noqa: E402
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -29,7 +29,7 @@ def run_static_pipeline(visualizer,schema_json_string) -> None:
     Executes the entire static data pipeline: scrape -> process/validate -> visualize.
     """
     logger.info("--- Starting Static Data Pipeline ---")
-    statics_raw_html: Optional[str] = scrap_web_data.fetch_static_data(config.URL_STATIC) 
+    statics_raw_html: Optional[str] = asyncio.run(scrap_web_data.fetch_static_data(config.URL_STATIC))
     clean_data.clean_static_data(statics_raw_html)
     generate_mermaid_graphviz(visualizer,schema_json_string)
     
