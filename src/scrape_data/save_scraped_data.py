@@ -1,6 +1,6 @@
 """Script to save cleaned HTML table data from static or dynamic web pages."""
-from src import clean_data
-from src import scrap_web_data
+from . import clean_data
+from . import scrape_web_data
 import logging
 import argparse
 import json
@@ -38,10 +38,10 @@ def save_cleaned_data(
     Main function to scrape, clean, and save data based on the specified mode.
     """
     if mode=="static":
-        static_html = asyncio.run(scrap_web_data.fetch_static_data())
+        static_html = asyncio.run(scrape_web_data.fetch_static_data())
         cleaned_data = clean_data.clean_static_data(static_html)
     elif mode=="dynamic":
-        dynamic_html = asyncio.run(scrap_web_data.fetch_dynamic_table_content())
+        dynamic_html = asyncio.run(scrape_web_data.fetch_dynamic_table_content())
         cleaned_data = clean_data.clean_dynamic_data(dynamic_html)
     else:
         logging.error(f"Invalid mode: {mode}. Choose 'static' or 'dynamic'.")
@@ -52,6 +52,7 @@ def save_cleaned_data(
     base_name,_ =os.path.splitext(file_path)
     final_file_path= f"{base_name}.{file_format}"
     save_cleaned_data_to_file(cleaned_data,final_file_path,file_format)
+    logging.info(f"File saved successfully: {final_file_path}")
 
 def main(mode:str, file_path:str, file_format)->None:
     base_file_path: str

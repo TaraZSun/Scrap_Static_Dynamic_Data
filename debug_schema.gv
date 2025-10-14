@@ -1,0 +1,4 @@
+// Pydantic Schema Relationship
+digraph {
+	graph [rankdir=LR splines=ortho]
+}
