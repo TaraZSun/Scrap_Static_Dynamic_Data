@@ -12,6 +12,7 @@ from . import static_models, config, dynamic_models, save_scraped_data
 import shutil
 from .config import settings
 
+
 logger = logging.getLogger(__name__)
 
 if not shutil.which("dot"):
@@ -21,11 +22,9 @@ if not shutil.which("dot"):
     )
 
 def static_model()->tuple:
-    # pass a list of model classes (not the module)
-    # for pydantic v1: use .schema() to get a dict
     model_cls = static_models.PopulationTable
     visualizer = visualize.Visualizer(models_to_visualize=static_models)
-    schema_dict = json.loads(model_cls.schema_json())  # pydantic v1: schema() returns dict
+    schema_dict = json.loads(model_cls.schema_json())
     return visualizer, schema_dict
 
 
@@ -38,15 +37,12 @@ def dynamic_model()->tuple:
 
 def generate_mermaid_graphviz(visualizer, schema_dict) -> None:
     # Mermaid
-    mermaid_text = visualizer.generate_mermaid_schema()  # returns string
+    mermaid_text = visualizer.generate_mermaid_schema() 
     logger.info("Mermaid diagram:\n%s", mermaid_text)
 
-    # Graphviz: returns path to rendered file (or None)
+    # Graphviz
     out_path = visualizer.generate_graphvid(
-        schema_dict,
-        output_path="detailed_pydantic_schema",
-        fmt="png",
-        view=False,  # don't try to open it automatically
+        schema_dict=schema_dict,
     )
     if out_path:
         logger.info("Graphviz diagram saved to %s", out_path)
