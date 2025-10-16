@@ -2,7 +2,7 @@
 .vscode/       
 .idea/       
 venv/
-env/
+
 .venv/
 .python-version
 __pycache__/
@@ -15,14 +15,9 @@ data/
 *.json
 *.html
 *.log
-app.log
 *.dot
 *.png
 *.svg
-detailed_pydantic_schema.png 
-.env            # Environment variables file
-.env.*
-
-detailed_pydantic_schema.png
+.env       
 detailed_pydantic_schema
 out
