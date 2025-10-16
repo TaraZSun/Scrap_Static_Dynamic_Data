@@ -24,12 +24,15 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0",
+    "pytest-asyncio",
+    "playwright",
     "pytest-cov>=5.0",
     "black>=24.0",
     "ruff>=0.6",
     "mypy>=1.10",
     "python-dotenv",
 ]
+
 
 [project.scripts]
 scrape-data = "scrape_data.main:main"

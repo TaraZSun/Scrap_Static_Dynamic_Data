@@ -13,13 +13,11 @@ async def accept_cookies(page: Page) -> bool:
         "button:has-text('Go to end')",
         "button:has-text('Reject all')",
     ]
-
-    # 先滚动触发弹窗
     for _ in range(2):
         await page.evaluate("window.scrollBy(0, document.body.scrollHeight / 2)")
         await asyncio.sleep(0.5)
 
-    # 直接尝试在页面点击
+
     for sel in cookie_button_selectors:
         try:
             await page.locator(sel).first.click(timeout=2000)
@@ -27,7 +25,6 @@ async def accept_cookies(page: Page) -> bool:
         except Exception:
             continue
 
-    # 尝试 iframe
     for frame in page.frames:
         for sel in cookie_button_selectors:
             try:
@@ -36,7 +33,6 @@ async def accept_cookies(page: Page) -> bool:
             except Exception:
                 continue
 
-    # 最后兜底
     try:
         btn = page.get_by_role("button", name=r"(?i)(accept all|agree|go to end|reject all)")
         await btn.first.click(timeout=2000)

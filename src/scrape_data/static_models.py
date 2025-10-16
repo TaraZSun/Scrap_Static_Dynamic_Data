@@ -1,6 +1,5 @@
 """Script to define Pydantic models for world population data."""
-from typing import List
-from pydantic import BaseModel, Field  # type: ignore
+from pydantic import BaseModel, Field, StrictInt  # type: ignore
 
 class CountryData(BaseModel):
   """
@@ -13,7 +12,7 @@ class CountryData(BaseModel):
     yearly_change_rate: The annual population change rate, stored as a percentage string(e.g., '0.98%').
   """
   country_name: str = Field(alias="Country (or dependency)", description="A country name, expected type is string.")
-  population_2025: int = Field(alias="Population 2025", description="Population in 2025, which has to be integer.")
+  population_2025: StrictInt = Field(alias="Population 2025", description="Population in 2025, which has to be integer.")
   yearly_change_rate: str = Field(alias="Yearly Change", description="Yearly change rate, such as '0.98%'.")
 
 
@@ -24,5 +23,5 @@ class PopulationTable(BaseModel):
   Args:
     countries: A list contaning all valid country records.
   """
-  countries: List[CountryData]
+  countries: list[CountryData]
 

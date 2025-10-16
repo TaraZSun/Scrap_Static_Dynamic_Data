@@ -2,23 +2,27 @@
 import asyncio
 import logging
 from playwright.async_api import async_playwright
-
+import pytest
+import re
 
 logger = logging.getLogger(__name__)
 
 url = "https://finance.yahoo.com/world-indices"
 
-async def test():
+@pytest.mark.asyncio
+async def test_playwright_fetch_title():
     async with async_playwright() as p:
-        print("Playwright started, browser types:", p._impl_obj  if hasattr(p, "_impl_obj") else "ok")
         browser = await p.chromium.launch(headless=True)
-        print("browser launched:", browser is not None)
-        context = await browser.new_context()
-        page = await context.new_page()
-        print("page created:", page is not None)
-        content = await page.goto(url, timeout=10000)
-        print("goto returned:", content is not None)
-        print("title:", await page.title())
+        page = await browser.new_page()
+        await page.goto(url=url, timeout=60000)
+        consent_button = page.locator("button:has-text('Accept all')")
+        if await consent_button.count() > 0:
+            await consent_button.first.click()
+            logger.info("Clicked consent button.")
+        await page.wait_for_load_state("networkidle")
+        title = await page.title()
+        await browser.close()
+        assert re.search(r"Yahoo Finance", title), f"Title does not match: {title}"
         await browser.close()
 
-asyncio.run(test())
+asyncio.run(test_playwright_fetch_title())

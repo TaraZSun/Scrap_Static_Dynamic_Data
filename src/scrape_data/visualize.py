@@ -1,10 +1,9 @@
 """Visualize: generate Mermaid diagrams and Graphviz relationship diagrams from Pydantic JSON Schema."""
 from __future__ import annotations
 
-import html
 import logging
 import pathlib
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Optional, Union
 from collections.abc import Iterable
 import json
 from pydantic_mermaid import MermaidGenerator  # type: ignore
@@ -13,9 +12,6 @@ import graphviz  # type: ignore
 from scrape_data.utils import render_graph
 
 logger = logging.getLogger(__name__)
-
-
-
 
 
 class Visualizer:

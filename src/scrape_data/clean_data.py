@@ -59,14 +59,9 @@ def _validate_with_model(records: List[Dict[str, Any]], model: Type) -> Optional
     If validation fails, logs and returns None.
     """
     try:
-        # support two common patterns:
-        # 1) model accepts a single container field (e.g. IndexTable(indices=[...]))
-        # 2) model is an item model and we validate list of items individually
-        # Try pattern 1 first:
         instance = model(**{list(model.__fields__.keys())[0]: records})  # type: ignore[attr-defined]
         return instance
     except Exception:
-        # fallback: try validating each record with the model (if model is a row/item model)
         validated = []
         errors = []
         for idx, rec in enumerate(records):
@@ -103,8 +98,6 @@ def clean_static_data(static_raw_html: Optional[str], validate: bool = False, mo
         if not all(col in df.columns for col in required):
             logger.error("clean_static_data: missing required columns. expected=%s found=%s", required, list(df.columns))
             return None
-
-        # Normalize population column
         if "Population 2025" in df.columns:
             df["Population 2025"] = _parse_int_nullable(df["Population 2025"])
 
@@ -142,15 +135,9 @@ def clean_dynamic_data(dynamic_raw_html: Optional[str], validate: bool = False, 
             return None
 
         df = tables[0]
-
-        # Common placeholders -> NA
         df.replace({"--": pd.NA, "N/A": pd.NA, "": pd.NA}, inplace=True)
-
-        # Volume normalization
         if "Volume" in df.columns:
             df["Volume"] = _parse_volume_column(df["Volume"])
-
-        # Numeric columns to float
         if "Last Price" in df.columns:
             df["Last Price"] = _parse_float_nullable(df["Last Price"])
         if "Change" in df.columns:
@@ -172,8 +159,6 @@ def clean_dynamic_data(dynamic_raw_html: Optional[str], validate: bool = False, 
         logger.exception("clean_dynamic_data: exception during cleaning: %s", exc)
         return None
 
-
-# CLI/entry convenience: keep simple behavior, return int exit code
 def main(mode: str, url: Optional[str] = None, validate: bool = False, model: Optional[Type] = None) -> int:
     """
     Run fetch + clean pipeline for given mode ('static'|'dynamic').
@@ -196,8 +181,7 @@ def main(mode: str, url: Optional[str] = None, validate: bool = False, model: Op
                 return 1
             result = clean_static_data(html, validate=validate, model=model)
             return 0 if result else 1
-
-        # dynamic
+        # mode == "dynamic"
         target_url = url or settings.URL_DYNAMIC
         html = asyncio_run_safe(
             scrape_web_data.fetch_dynamic_table_content(
@@ -226,7 +210,6 @@ def asyncio_run_safe(coro):
     try:
         return asyncio.run(coro)
     except RuntimeError:
-        # When running inside an existing event loop (e.g. notebook), use alternative
         try:
             loop = asyncio.get_event_loop()
             if loop and loop.is_running():
