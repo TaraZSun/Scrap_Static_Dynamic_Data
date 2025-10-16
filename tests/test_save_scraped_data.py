@@ -1,9 +1,7 @@
 import json
 import pandas as pd
 import os
-import tempfile
 import scrape_data.save_scraped_data as sd
-
 import shutil
 
 def test_save_cleaned_data_to_file_json(tmp_path):

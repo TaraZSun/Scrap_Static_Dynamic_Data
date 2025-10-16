@@ -1,8 +1,5 @@
-# tests/test_static_models.py
 import pytest
 from pydantic import ValidationError
-
-# Adjust this import to your actual module path if needed
 from scrape_data.static_models import CountryData, PopulationTable
 
 

@@ -1,10 +1,8 @@
-from typing import List
 from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
-    # --- General Web Scraping Configuration ---
-    STATUS_FORCELIST: List[int] = [429, 500, 502, 503, 504]
+    STATUS_FORCELIST: list[int] = [429, 500, 502, 503, 504]
     MAX_RETRIES: int = 3
 
     USER_AGENT: str = (
@@ -14,13 +12,13 @@ class Settings(BaseSettings):
     )
 
     # Bypass scripts to reduce automation detection (list for extensibility)
-    BYPASS_SCRIPTS: List[str] = [
+    BYPASS_SCRIPTS: list[str] = [
         "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
     ]
 
     # --- Static Data (World Population) Configuration ---
     URL_STATIC: str = "https://www.worldometers.info/world-population/population-by-country/"
-    REQUIRED_COLUMNS_STATIC: List[str] = ["Country (or dependency)", "Population 2025"]
+    REQUIRED_COLUMNS_STATIC: list[str] = ["Country (or dependency)", "Population 2025"]
 
     # --- Dynamic Data (Yahoo Finance Indices) Configuration ---
     URL_DYNAMIC: str = "https://finance.yahoo.com/world-indices"
@@ -32,7 +30,7 @@ class Settings(BaseSettings):
     SLOW_MO_MS: int = 0
 
     # Cookie dialog candidate button selectors
-    COOKIE_BUTTON_SELECTORS: List[str] = [
+    COOKIE_BUTTON_SELECTORS: list[str] = [
         "button:has-text('Accept all')",
         "button:has-text('Agree')",
         "button:has-text('I agree')",

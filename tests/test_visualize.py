@@ -1,12 +1,8 @@
-# tests/test_visualize.py
 import json
-import pytest
-
 from scrape_data import visualize 
 
 
 def test_generate_mermaid_schema_returns_text_and_saves(tmp_path, monkeypatch):
-    # Patch MermaidGenerator used inside Visualizer.__init__
     class DummyMermaidGenerator:
         def __init__(self, *_, **__):
             pass
@@ -20,11 +16,9 @@ def test_generate_mermaid_schema_returns_text_and_saves(tmp_path, monkeypatch):
 
     v = visualize.Visualizer(models_to_visualize=None)
 
-    # returns text
     text = v.generate_mermaid_schema()
     assert "A-->" in text
 
-    # saves to file when save_path is provided
     out_file = tmp_path / "diagram.mmd"
     text2 = v.generate_mermaid_schema(save_path=out_file)
     assert out_file.exists()
@@ -38,8 +32,6 @@ def test_generate_graphvid_with_dict_returns_path(monkeypatch, tmp_path):
 
     monkeypatch.setattr("scrape_data.visualize.MermaidGenerator", DummyMermaidGenerator)
 
-
-    # Fake renderer: just exercise node/edge calls
     def fake_render_graph(schema_dict, dot):
         dot.node("A")
         dot.node("B")
@@ -52,7 +44,6 @@ def test_generate_graphvid_with_dict_returns_path(monkeypatch, tmp_path):
         def node(self, *a, **kw): pass
         def edge(self, *a, **kw): pass
         def render(self, filename, directory, cleanup):
-            # simulate Graphviz writing a file and returning its path
             return str(tmp_path / "schema.png")
 
     monkeypatch.setattr("scrape_data.visualize.graphviz.Digraph", lambda *a, **kw: DummyDot())
@@ -111,7 +102,6 @@ def test_generate_graphviz_render_failure_returns_none(monkeypatch, caplog):
     monkeypatch.setattr("scrape_data.visualize.MermaidGenerator", DummyMermaidGenerator)
 
     def fake_render_graph(schema_dict, dot):
-        # renderer runs fine; render() will fail later
         pass
 
     monkeypatch.setattr("scrape_data.visualize.render_graph.main", fake_render_graph)

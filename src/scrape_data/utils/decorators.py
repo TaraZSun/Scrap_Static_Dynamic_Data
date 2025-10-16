@@ -84,11 +84,8 @@ def retry_async(
                             on_retry(attempt, e)
                         await asyncio.sleep(delay)
                         continue
-
-                    # last attempt failed: re-raise to caller
                     logger.error("Max retries reached for %s; raising last exception", func.__name__)
                     raise
-            # If we break out without returning (shouldn't happen), raise a clear error.
             raise RetryError(f"Retry loop exhausted for {func.__name__}") from last_exc
 
         return wrapper

@@ -1,5 +1,4 @@
 """Create Pydantic models for structured representation of World Indices data."""
-from typing import List
 from pydantic import BaseModel, Field  # type: ignore
 
 class IndexData(BaseModel):
@@ -27,4 +26,4 @@ class IndexTable(BaseModel):
     Args:
         indices: A list containing all valid IndexData records.
     """
-    indices: List[IndexData]
+    indices: list[IndexData]

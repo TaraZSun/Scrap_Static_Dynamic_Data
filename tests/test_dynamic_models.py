@@ -1,8 +1,5 @@
-# tests/test_dynamic_models.py
 import pytest
 from pydantic import ValidationError
-
-# adjust import path to where your models actually live
 from scrape_data.dynamic_models import IndexData, IndexTable
 
 

@@ -8,7 +8,7 @@ import asyncio
 from typing import Optional
 import json
 from . import clean_data, scrape_web_data, visualize
-from . import static_models, config, dynamic_models, save_scraped_data
+from . import static_models, dynamic_models, save_scraped_data
 import shutil
 from .config import settings
 

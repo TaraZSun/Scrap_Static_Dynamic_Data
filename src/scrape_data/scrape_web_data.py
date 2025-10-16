@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
 import argparse
 from .utils.decorators import retry_async
-from .config import settings
+from scrape_data.config import settings
 
 logger = logging.getLogger(__name__)  
 
@@ -49,7 +49,7 @@ async def fetch_static_data(url: str = settings.URL_STATIC) -> Optional[str]:
     
     return await asyncio.to_thread(sync_request)
 
-
+from scrape_data.config import settings
 @retry_async(
     max_retries=settings.MAX_RETRIES,
     base_delay=10.0,
@@ -86,7 +86,8 @@ async def fetch_dynamic_table_content(
             await accept_cookies(page)
 
             if settings.DEBUG:
-                await page.screenshot(path="debug.png",full_page=True)
+                print({settings.DEBUG})
+                await page.screenshot(path=settings.DEBUG_SCREENSHOT_PATH,full_page=True)
 
             await page.wait_for_selector(
                 settings.TABLE_HEADER_SELECTOR_DYNAMIC, 

@@ -1,15 +1,9 @@
 import json
 import html
 import logging
-from typing import Any, Dict
+from typing import Any
 import graphviz
-import html
-from typing import List
 from scrape_data.config import settings
-import json
-import logging
-from typing import Any, Dict
-import graphviz
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +17,7 @@ class SchemaError(Exception):
     pass
 
 
-def extract_defs(schema: Any) -> Dict[str, Any]:
+def extract_defs(schema: Any) -> dict[str, Any]:
     if isinstance(schema, str):
         try:
             schema = json.loads(schema)
@@ -47,12 +41,12 @@ def extract_defs(schema: Any) -> Dict[str, Any]:
 
 
 def build_nodes(dot: graphviz.Digraph,
-                defs: Dict[str, Any],
+                defs: dict[str, Any],
                 ) -> None:
     for name, definition in defs.items():
         properties = definition.get("properties", {}) or {}
 
-        parts: List[str] = []
+        parts: list[str] = []
         parts.append(
             f'<TABLE BORDER="{settings.TABLE_BORDER}" CELLBORDER="{settings.CELL_BORDER}" '
             f'CELLSPACING="{settings.CELL_SPACING}" CELLPADDING="{settings.CELL_PADDING}" BGCOLOR="{settings.BG_COLOR}">'
@@ -65,7 +59,7 @@ def build_nodes(dot: graphviz.Digraph,
             t = prop_data.get("type")
             if settings.REF_KEY in prop_data:
                 ref_name = prop_data[settings.REF_KEY].split("/")[-1]
-                type_str = f"List[{ref_name}]"
+                type_str = f"list[{ref_name}]"
             else:
                 if isinstance(t, list):
                     type_str = "|".join(str(x) for x in t)
@@ -102,7 +96,7 @@ def build_nodes(dot: graphviz.Digraph,
 
 
 def build_edges(dot: graphviz.Digraph,
-                defs: Dict[str, Any],
+                defs: dict[str, Any],
                 ) -> None:
     """Create edges based on $ref relationships."""
     for name, definition in defs.items():
@@ -112,7 +106,7 @@ def build_edges(dot: graphviz.Digraph,
                 port = _safe_port(prop_name)
                 dot.body.append(f'"{name}":{port} -> "{ref_name}";')
 
-def main(schema_dict: Dict[str, Any], dot:graphviz.Digraph) -> None:
+def main(schema_dict: dict[str, Any], dot:graphviz.Digraph) -> None:
     """Generate a Graphviz diagram from a Pydantic JSON schema dictionary."""
     defs = extract_defs(schema_dict)
     build_nodes(dot=dot, defs=defs)

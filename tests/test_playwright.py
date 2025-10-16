@@ -1,4 +1,3 @@
-# test_playwright.py
 import asyncio
 import logging
 from playwright.async_api import async_playwright

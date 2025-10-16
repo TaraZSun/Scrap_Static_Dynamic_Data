@@ -1,5 +1,3 @@
-# tests/test_cleaners.py
-import types
 import pandas as pd
 import pytest
 from scrape_data import clean_data as m

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import logging
 import pathlib
-from typing import Any, Dict, Optional, Union
+from typing import Any, Optional, Union
 from collections.abc import Iterable
 import json
 from pydantic_mermaid import MermaidGenerator  # type: ignore
@@ -40,7 +40,7 @@ class Visualizer:
 
         return mermaid_text
     
-    def generate_graphvid(self, schema_dict: Dict[str, Any]):
+    def generate_graphvid(self, schema_dict: dict[str, Any]):
         if isinstance(schema_dict, str):
             try:
                 schema_dict = json.loads(schema_dict)

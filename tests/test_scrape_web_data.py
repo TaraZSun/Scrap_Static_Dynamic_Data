@@ -1,6 +1,4 @@
 import pytest
-import types
-
 import scrape_data.scrape_web_data as swd
 
 @pytest.mark.asyncio

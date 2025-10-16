@@ -1,5 +1,4 @@
 import pytest
-import asyncio
 import scrape_data.utils.accept_cookies as ac
 
 

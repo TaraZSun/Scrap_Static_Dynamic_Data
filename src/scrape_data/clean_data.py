@@ -3,11 +3,10 @@ from __future__ import annotations
 
 import io
 import logging
-from typing import Any, Dict, List, Optional, Type
-
+from typing import Any, Dict, Optional, Type
 import pandas as pd  # type: ignore
-
 from .config import settings
+from . import scrape_web_data  # local import to avoid circular at module import time
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +52,7 @@ def _parse_volume_column(series: pd.Series) -> pd.Series:
     return pd.Series(parsed, dtype="Int64")
 
 
-def _validate_with_model(records: List[Dict[str, Any]], model: Type) -> Optional[Any]:
+def _validate_with_model(records: list[dict[str, Any]], model: Type) -> Optional[Any]:
     """
     Validate records with a provided Pydantic model type (a table model expecting e.g. a list).
     If validation fails, logs and returns None.
@@ -76,7 +75,7 @@ def _validate_with_model(records: List[Dict[str, Any]], model: Type) -> Optional
         return validated
 
 
-def clean_static_data(static_raw_html: Optional[str], validate: bool = False, model: Optional[Type] = None) -> Optional[List[Dict[str, Any]]]:
+def clean_static_data(static_raw_html: Optional[str], validate: bool = False, model: Optional[Type] = None) -> Optional[list[dict[str, Any]]]:
     """
     Parse and clean the raw static HTML for population data.
     Returns list[dict] (records) or None on failure.
@@ -118,7 +117,7 @@ def clean_static_data(static_raw_html: Optional[str], validate: bool = False, mo
         return None
 
 
-def clean_dynamic_data(dynamic_raw_html: Optional[str], validate: bool = False, model: Optional[Type] = None) -> Optional[List[Dict[str, Any]]]:
+def clean_dynamic_data(dynamic_raw_html: Optional[str], validate: bool = False, model: Optional[Type] = None) -> Optional[list[dict[str, Any]]]:
     """
     Parse and clean the raw dynamic HTML (e.g. Yahoo indices).
     Returns list[dict] (records) or None on failure.
@@ -166,7 +165,7 @@ def main(mode: str, url: Optional[str] = None, validate: bool = False, model: Op
     Note: this function uses the scrape_web_data async helpers and runs them synchronously via asyncio.run,
     which is appropriate for CLI convenience but avoid calling main() from inside an active event loop.
     """
-    from . import scrape_web_data  # local import to avoid circular at module import time
+   
 
     try:
         if mode not in ("static", "dynamic"):
