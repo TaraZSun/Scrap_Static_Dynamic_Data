@@ -1,4 +1,4 @@
-# Scrap Static Dynamic Data
+# Scrape Static Dynamic Data
 
 A Python project for **scraping**, **cleaning**, and **visualizing** tabular data from both static and dynamic web pages.  
 It uses **pandas** for cleaning, **pydantic** for validation, and **Playwright** for scraping JavaScript-driven tables.  
@@ -8,7 +8,7 @@ Schemas can be visualized as **Mermaid** or **Graphviz** diagrams.
 
 ## ✨ Features
 
-- **Static data scraping**: fetch HTML tables and clean them (e.g. population statistics).  
+- **Static data scraping**: fetch HTML tables and clean them (e.g., population statistics).  
 - **Dynamic data scraping**: use Playwright to extract Yahoo Finance world indices and similar tables.  
 - **Data cleaning**:
   - Normalize numbers with commas → integers  
@@ -16,7 +16,7 @@ Schemas can be visualized as **Mermaid** or **Graphviz** diagrams.
   - Parse volumes like `1.2M`, `3.4B`, etc.  
 - **Validation**: use Pydantic models (`static_models.py`, `dynamic_models.py`) for schema enforcement.  
 - **Visualization**:
-  - Generate Mermaid diagrams of schema  
+  - Generate Mermaid diagrams of the schema  
   - Generate Graphviz diagrams (`.gv`, `.png`, `.svg`)  
 
 ---
@@ -60,7 +60,7 @@ python3 -m venv venv
 source venv/bin/activate
 
 # Install dependencies
-pip install -e .[dev]
+pip install -e.[dev]
 
 # Install Playwright browsers (first time only)
 playwright install chromium
